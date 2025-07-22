@@ -1,0 +1,7 @@
+ultralytics 
+opencv-python 
+pillow 
+pdf2image 
+music21
+label-studio
+matplotlib
