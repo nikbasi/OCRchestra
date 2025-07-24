@@ -16,12 +16,16 @@ LABEL_DIR = "data/labels"
 # 3. Measure the Y-pixel coordinate of the CENTER of that notehead.
 F5_Y_POSITION = 351.6           # The Y-pixel coordinate for the note F5.
 STAFF_LINE_SPACING = 13.775     # The pixel distance between two lines on a staff.
-LEFT_MARGIN_PIXELS = 301        # Left margin from the centroid of the first note
-RIGHT_MARGIN_PIXELS = 921       # Right margin from the end of the staff
+LEFT_MARGIN_PIXELS = 297.5        # Left margin from the centroid of the first note
+RIGHT_MARGIN_PIXELS = 931       # Right margin from the end of the staff
 
 # Note size and position fine-tuning
 NOTEHEAD_WIDTH = 18             # The width of a notehead's bounding box.
 NOTEHEAD_HEIGHT = 13            # The height of a notehead's bounding box.
+
+# Bounding box expansion factor
+# Adjust this to increase/decrease the size of all boxes around their center (1.0 = original size)
+BOX_EXPANSION_FACTOR = 1.2
 
 # Map symbols to class IDs for YOLO
 CLASS_MAP = {
@@ -34,7 +38,6 @@ CLASS_MAP = {
 # The script internally uses C4 as its reference anchor (0-point).
 # We calculate its position automatically based on your F5 measurement.
 # F5 is 9 diatonic steps above C4 (C,D,E,F,G,A,B,C,D,E,F -> count the letters after C).
-# Wait, C-D-E-F-G-A-B-C-D-E-F is 11 steps. Let's use music21's numbers.
 # F5 diatonicNoteNum is 38. C4 is 29. The difference is 9. Correct.
 C4_Y_POSITION = F5_Y_POSITION + 10 * (STAFF_LINE_SPACING / 2)
 
@@ -87,7 +90,9 @@ def generate_labels():
                     offset_from_c4 = (element.pitch.diatonicNoteNum - 29)
                     y_center = C4_Y_POSITION - offset_from_c4 * (STAFF_LINE_SPACING / 2)
                     class_id = CLASS_MAP["note"]
-                    box_w, box_h = NOTEHEAD_WIDTH, NOTEHEAD_HEIGHT
+                    # Apply expansion factor to box dimensions
+                    box_w = NOTEHEAD_WIDTH * BOX_EXPANSION_FACTOR
+                    box_h = NOTEHEAD_HEIGHT * BOX_EXPANSION_FACTOR
                     yolo_labels.append(yolo_format(x_center, y_center, box_w, box_h, img_width, img_height, class_id, pitch_name))
 
                 elif isinstance(element, chord.Chord):
@@ -96,7 +101,9 @@ def generate_labels():
                         offset_from_c4 = (p.diatonicNoteNum - 29)
                         y_center_chord = C4_Y_POSITION - offset_from_c4 * (STAFF_LINE_SPACING / 2)
                         class_id = CLASS_MAP["note"]
-                        yolo_labels.append(yolo_format(x_center, y_center_chord, NOTEHEAD_WIDTH, NOTEHEAD_HEIGHT, img_width, img_height, class_id, pitch_name))
+                        box_w = NOTEHEAD_WIDTH * BOX_EXPANSION_FACTOR
+                        box_h = NOTEHEAD_HEIGHT * BOX_EXPANSION_FACTOR
+                        yolo_labels.append(yolo_format(x_center, y_center_chord, box_w, box_h, img_width, img_height, class_id, pitch_name))
 
             with open(label_path, "w") as f:
                 f.write("\n".join(yolo_labels))
@@ -107,6 +114,7 @@ def generate_labels():
 
     print("-" * 40)
     print("Label generation complete.")
+
 
 def yolo_format(x_center, y_center, box_w, box_h, img_w, img_h, class_id, note_name=""):
     """

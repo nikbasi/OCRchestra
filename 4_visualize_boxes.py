@@ -121,12 +121,9 @@ if __name__ == '__main__':
     for i, label_filename in enumerate(label_files):
         base_name = os.path.splitext(label_filename)[0]
 
-        image_name_v1 = f"{base_name}.png"
-        image_name_v2 = f"{base_name.replace('-1', '')}.png"
+        image_name = f"{base_name}.png"
         
-        image_path = os.path.join(PNG_DIR, image_name_v1)
-        if not os.path.exists(image_path):
-            image_path = os.path.join(PNG_DIR, image_name_v2)
+        image_path = os.path.join(PNG_DIR, image_name)
 
         label_path = os.path.join(LABEL_DIR, label_filename)
         save_path = os.path.join(OUTPUT_DIR, f"{base_name}_boxed.png")
