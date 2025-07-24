@@ -14,15 +14,14 @@ LABEL_DIR = "data/labels"
 # 1. Open a generated PNG in an image editor.
 # 2. Find a note on the TOP line of the staff (this is F5 in the treble clef).
 # 3. Measure the Y-pixel coordinate of the CENTER of that notehead.
-F5_Y_POSITION = 351.6      # The Y-pixel coordinate for the note F5.
-STAFF_LINE_SPACING = 13.775   # The pixel distance between two lines on a staff.
-LEFT_MARGIN_PIXELS = 297      # The x-centroid of the first note
-RIGHT_MARGIN_PIXELS = 931       # Approx. right-side padding.
+F5_Y_POSITION = 351.6           # The Y-pixel coordinate for the note F5.
+STAFF_LINE_SPACING = 13.775     # The pixel distance between two lines on a staff.
+LEFT_MARGIN_PIXELS = 301        # Left margin from the centroid of the first note
+RIGHT_MARGIN_PIXELS = 921       # Right margin from the end of the staff
 
 # Note size and position fine-tuning
 NOTEHEAD_WIDTH = 18             # The width of a notehead's bounding box.
 NOTEHEAD_HEIGHT = 13            # The height of a notehead's bounding box.
-
 
 # Map symbols to class IDs for YOLO
 CLASS_MAP = {
